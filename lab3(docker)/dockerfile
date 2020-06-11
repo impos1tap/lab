@@ -1,0 +1,14 @@
+
+FROM debian
+ADD docker.list /etc/apt/sources.list.d/
+RUN apt-get update && apt-get -y upgrade && apt -y install nginx && apt-get clean && \
+    cd /var/www/ && rm -rf ./* && \
+    mkdir -p impos1tap.com/img && \
+    chmod -R 754 /var/www/impos1tap.com/ && \
+    useradd Anton && groupadd Akimov && usermod -aG Akimov Anton && \
+    chown -R Anton:Akimov /var/www/impos1tap.com/ && \
+    sed -i 's/\/var\/www\/html/\/var\/www\/impos1tap.com/g' /etc/nginx/sites-enabled/default && \
+    sed -i 's/user www-data/user Anton/g' /etc/nginx/nginx.conf
+ADD index.html /var/www/impos1tap.com/
+ADD img.jpg /var/www/impos1tap.com/img/
+CMD ["nginx", "-g", "daemon off;"]
